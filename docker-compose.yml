@@ -1,0 +1,25 @@
+version: "3.5"
+
+services:
+  alipay-management-manage:
+    image: registry.cn-shenzhen.aliyuncs.com/meta-houselai/ruihe_h5_pay:v1.0
+    restart: always
+    container_name: alipay-management-manage
+    volumes:
+      - $PWD:/app
+    networks:
+      - docker_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.alipay-management-manage.rule=Host(`api.alipay-tools.houselai.com`) && PathPrefix(`/manage`)"
+      - "traefik.http.routers.alipay-management-manage.tls=true"
+      - "traefik.http.routers.alipay-management-manage.tls.certResolver=le-ssl"
+      - "traefik.http.routers.alipay-management-manage.service=alipay-management-manage-service"
+      - "traefik.http.services.alipay-management-manage-service.loadbalancer.server.port=5000"
+      - "traefik.http.routers.alipay-management-manage.middlewares=api-stripprefix@docker"
+      - "traefik.http.middlewares.api-stripprefix.stripprefix.prefixes=/manage"
+
+networks:
+  docker_default:
+    external: true

@@ -1,0 +1,57 @@
+欢迎使用微信支付！
+附件中的三份文件（证书pkcs12格式、证书pem格式、证书密钥pem格式）,为接口中强制要求时需携带的证书文件。
+证书属于敏感信息，请妥善保管不要泄露和被他人复制。
+不同开发语言下的证书格式不同，以下为说明指引：
+    证书pkcs12格式（apiclient_cert.p12）
+        包含了私钥信息的证书文件，为p12(pfx)格式，由微信支付签发给您用来标识和界定您的身份
+        部分安全性要求较高的API需要使用该证书来确认您的调用身份
+        windows上可以直接双击导入系统，导入过程中会提示输入证书密码，证书密码默认为您的商户号（如：1900006031）
+    证书pem格式（apiclient_cert.pem）
+        从apiclient_cert.p12中导出证书部分的文件，为pem格式，请妥善保管不要泄漏和被他人复制
+        部分开发语言和环境，不能直接使用p12文件，而需要使用pem，所以为了方便您使用，已为您直接提供
+        您也可以使用openssl命令来自己导出：openssl pkcs12 -clcerts -nokeys -in apiclient_cert.p12 -out apiclient_cert.pem
+    证书密钥pem格式（apiclient_key.pem）
+        从apiclient_cert.p12中导出密钥部分的文件，为pem格式
+        部分开发语言和环境，不能直接使用p12文件，而需要使用pem，所以为了方便您使用，已为您直接提供
+        您也可以使用openssl命令来自己导出：openssl pkcs12 -nocerts -in apiclient_cert.p12 -out apiclient_key.pem
+备注说明：  
+        由于绝大部分操作系统已内置了微信支付服务器证书的根CA证书,  2018年3月6日后, 不再提供CA证书文件（rootca.pem）下载
+
+
+
+```
+(serial_no)/wxp_cert.pem      # pem格式的微信支付平台证书
+
+(serial_no)/wxp_pub.pem       # 微信支付平台普通公钥(PKCS#8格式化后的密钥格式，-----BEGIN PUBLIC KEY-----)
+
+wx_pub.pem             # 微信支付平台原始公钥(原始秘钥，-----BEGIN RSA PUBLIC KEY-----)
+
+(appid)/apiclient_cert.pem     # pem格式的商户证书
+
+(appid)/apiclient_key.pem      # 商户秘钥(PKCS#8格式化后的密钥格式，-----BEGIN PRIVATE KEY-----)
+
+(appid)/client_key.pem       # 原始商户秘钥(原始秘钥，-----BEGIN RSA PRIVATE KEY-----)
+```
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+> 注意：python仅支持原始秘钥，PKCS#8格式化后的都需重新转换为原始秘钥
+
+
+#### 1、微信平台公钥证书获取方式：
+
+接口文档：https://wechatpay-api.gitbook.io/wechatpay-api-v3/jie-kou-wen-dang/ping-tai-zheng-shu#huo-qu-ping-tai-zheng-shu-lie-biao
+
+* 通过获取平台证书列表api接口获取到加密的证书和数据加密方式及参数
+
+* ciphertext为Base64编码后的密文，algorithm为加密算法，nonce为加密使用的随机串初始化向量），associated_data为附加数据包（可能为空）
+
+*  通过官方提供的解密方式实现解密(当前提供Java/PHP/.NET和Python解密函数)，详情可见：https://wechatpay-api.gitbook.io/wechatpay-api-v3/qian-ming-zhi-nan-1/zheng-shu-he-hui-tiao-bao-wen-jie-mi
+
+#### 2、微信支付平台公钥证书转普通公钥方式：openssl x509 -in wxp_cert.pem -pubkey -noout > wxp_pub.pem
+
+#### 3、微信支付平台普通公钥转微信支付平台原始公钥：openssl rsa -pubin -in pub.key -RSAPublicKey_out
+
+#### 3、商户证书和商户秘钥可通过微信支付商户平台证书工具生成，详情可见：https://pay.weixin.qq.com/wiki/doc/apiv3/open/pay/chapter2_8_1.shtml
+
+#### 4、python可用商户秘钥需为原始商户秘钥，可通过openssl rsa -in apiclient_key.pem -out ./client_key.pem进行转换

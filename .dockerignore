@@ -1,0 +1,6 @@
+docker-compose.yml
+logs/
+__pycache__
+venv
+.vscode
+setting.py
