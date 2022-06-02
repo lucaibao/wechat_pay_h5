@@ -48,7 +48,7 @@ class WeiXinInfo:
     # 微信支付结果通知回调地址
     notify_url = "https://xxx.com/app/pay/callback.json"
     # 微信支付付款描述
-    pay_desc = "瑞合-检测项目"
+    pay_desc = "检测项目"
 
     # 获取code后重定向到前端页面
     redirect = "https://xxxxx.com/"
