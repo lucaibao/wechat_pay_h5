@@ -120,7 +120,7 @@ def get_wx_config_data(url=""):
             "nonceStr": nonce_str,
             "signature": signature
         }
-
+        current_app.logger.info(f"接口注入权限验证配置返回数据；data:{data}")
         return return_pack(code=Code.HSL_OK, msg="ok", status=True, info=data)
     except Exception as e:
         current_app.logger.error(f"error:{e}, traceback:{traceback.format_exc()}")
@@ -212,6 +212,7 @@ def pay_advice_dispose(out_trade_no: str, status: int):
         trade_state = pay_obj.trade_state
         if trade_state == "SUCCESS":
             data = {
+                "amount": pay_obj.total,
                 "pay_time": pay_obj.create_time.__str__()
             }
             return return_pack(code=Code.HSL_OK, msg="ok", status=True, info=data)

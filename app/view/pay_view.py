@@ -27,6 +27,7 @@ def wx_config():
             url = str(params.get("url", ""))  # 当前网页的URL，不包含#及其后面部分
         except ValueError:
             return return_pack(code=Code.HSL_PARAMS_ERROR, msg="参数类型错误")
+        current_app.logger.info(f"接口注入权限验证配置获取参数；url:{url}")
 
         if not url:
             return return_pack(code=Code.HSL_PARAMS_MISS, msg="请携带当前网页的url")
@@ -53,6 +54,7 @@ def jsapi():
             openid = str(params.get("openid", ""))  # 用户openid
         except ValueError:
             return return_pack(code=Code.HSL_PARAMS_ERROR, msg="参数类型错误")
+        current_app.logger.info(f"统一下单接口获取参数：name:{name}, phone:{phone}, amount:{amount}, openid:{openid},")
 
         if item_type not in ([ItemType.COMMON, ItemType.QUICK, ItemType.OTHER]):
             return return_pack(code=Code.HSL_PARAMS_MISS, msg="付款项目类型错误")
@@ -93,6 +95,7 @@ def pay_advice():
             status = int(params.get("status", 0))  # 支付状态  2取消支付，3支付成功(待确认)，5支付失败
         except ValueError:
             return return_pack(code=Code.HSL_PARAMS_ERROR, msg="参数类型错误")
+        current_app.logger.info(f"jsapi调起支付获取参数；out_trade_no：{out_trade_no}, status:{status}")
 
         current_app.logger.info(f"JSAPI调起支付结果反馈; out_trade_no:{out_trade_no}, status:{status}")
         if not out_trade_no:

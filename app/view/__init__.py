@@ -15,4 +15,7 @@ def init_app(app):
     from .user_view import user_api
     app.register_blueprint(user_api, url_prefix="/app/user")
 
+    from .download_view import download_api
+    app.register_blueprint(download_api, url_prefix="/app/download")
+
     return app
